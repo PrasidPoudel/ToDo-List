@@ -3,34 +3,47 @@ import "../styles/style.css"
 import { ProjectsArray } from "./logic"
 import { Projects } from "./logic"
 import { ProjectsDetails } from "./logic"
+import { NoDuplicates } from "./logic"
 
 //Let's open the project form first
-const add_project=document.querySelector('.projects')
-const showProjectForm=document.querySelector('.projects-form')
-add_project.addEventListener('click',()=>{
-    showProjectForm.style.display='block'
+const add_project = document.querySelector('.projects')
+const showProjectForm = document.querySelector('.projects-form')
+add_project.addEventListener('click', () => {
+    showProjectForm.style.display = 'block'
 })
 //Now take the name of project and add it add-projects class
-const projectLabel=document.querySelector(`#project-label`);
-const addLabel=document.querySelector('.add-button')
-addLabel.addEventListener('click',(event)=>{
+const projectLabel = document.querySelector(`#project-label`);
+const addLabel = document.querySelector('.add-button')
+addLabel.addEventListener('click', (event) => {
     event.preventDefault();
-    if(projectLabel.value!=='') {
-        DOMProject(projectLabel)
+    if (projectLabel.value !== '') {
+        let condition = NoDuplicates(ProjectsArray,projectLabel)
+        console.log(condition)
+        if (condition === true) {
+            DOMProject(projectLabel)
+        }
     }
 })
 
 //This is the function for adding the project on DOM 
 function DOMProject(element) {
-    const project_containers=document.querySelector('.add-projects')
-    const div=document.createElement('div')
-    div.textContent=element.value
+    const project_containers = document.querySelector('.add-projects')
+    const div = document.createElement('div')
+    div.textContent = element.value
     div.classList.add(`${element.value}`)
-    const projectname=new Projects(element.value)
+    const projectname = new Projects(element.value)
     ProjectsArray.push(projectname)
     project_containers.appendChild(div)
-    element.value=''
+    element.value = ''
+    console.log(ProjectsArray)
+
 }
+//Now let's check the condition when user click cancel
+const cancelProjectForm = document.querySelector('.cancel-button')
+cancelProjectForm.addEventListener('click', (event) => {
+    event.preventDefault()
+    showProjectForm.style.display = 'none'
+})
 
 
 /**
