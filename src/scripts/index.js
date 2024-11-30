@@ -4,6 +4,9 @@ import { ProjectsArray } from "./logic"
 import { Projects } from "./logic"
 import { ProjectsDetails } from "./logic"
 import { NoDuplicates } from "./logic"
+import trash from "../img/delete.svg"
+
+const tasksArray = []//This will store the task details
 
 //Let's open the project form first
 const add_project = document.querySelector('.projects')
@@ -17,33 +20,94 @@ const addLabel = document.querySelector('.add-button')
 addLabel.addEventListener('click', (event) => {
     event.preventDefault();
     if (projectLabel.value !== '') {
-        let condition = NoDuplicates(ProjectsArray,projectLabel)
+        let condition = NoDuplicates(ProjectsArray, projectLabel)
         console.log(condition)
         if (condition === true) {
             DOMProject(projectLabel)
         }
     }
+    OpenTodo()
 })
 
-//This is the function for adding the project on DOM 
-function DOMProject(element) {
-    const project_containers = document.querySelector('.add-projects')
-    const div = document.createElement('div')
-    div.textContent = element.value
-    div.classList.add(`${element.value}`)
-    const projectname = new Projects(element.value)
-    ProjectsArray.push(projectname)
-    project_containers.appendChild(div)
-    element.value = ''
-    console.log(ProjectsArray)
-
-}
 //Now let's check the condition when user click cancel
 const cancelProjectForm = document.querySelector('.cancel-button')
 cancelProjectForm.addEventListener('click', (event) => {
     event.preventDefault()
     showProjectForm.style.display = 'none'
 })
+
+
+//This is for showing the dialogbox for adding todo and closing the todo box
+const addTodo = document.querySelector('.add-todo')
+const dialogbox = document.querySelector('.dialog')
+addTodo.addEventListener('click', () => {
+    dialogbox.showModal();
+})
+const cancel=document.querySelector('.cancel');
+cancel.addEventListener('click',(event)=>{
+    event.preventDefault();
+    dialogbox.close()
+})
+
+//let's open and close the dialogbox
+const TaskDialogButton = document.querySelector('#submit');
+TaskDialogButton.addEventListener('click', (event) => {
+    event.preventDefault()
+    let title = document.getElementById('title').value
+    let description = document.getElementById('description').value
+    //We have to get due date too
+    let duedate=new Date(document.getElementById('duedate').value)
+    let p = document.getElementById('Priority').value
+
+    let checkbox = document.createElement('input');
+
+    // Assigning the attributes to created checkbox
+    checkbox.type = "checkbox";
+    checkbox.name = "done";
+    checkbox.value = "value";
+    checkbox.id = "checkbox";
+    let obj = new ProjectsDetails(checkbox, title, description, duedate, p)
+
+    tasksArray.push(obj)
+    console.table(tasksArray)
+    console.log('Projects: \n')
+    console.table(ProjectsArray)
+    console.log(p)
+})
+
+//Now let's add functionality to add Todo in Projects
+function OpenTodo() {
+    const addTodo = document.querySelector('.add-todo');
+    const projectContainers = document.querySelectorAll('.add-projects>button');
+    if (projectContainers) {
+        for (let items of projectContainers) {
+            items.addEventListener('click', () => {
+                addTodo.innerHTML = '+Todo'
+            })
+        }
+    }
+}
+
+//This is the function for adding the project on DOM 
+let projectIndex = 0
+function DOMProject(element) {
+    const project_containers = document.querySelector('.add-projects')
+    const container = document.createElement('button')
+    const div = document.createElement('div')
+    div.textContent = element.value
+    div.setAttribute('name', `${element.value}`)
+    const projectname = new Projects(element.value,tasksArray)
+    ProjectsArray.push(projectname)
+    const img = document.createElement('img')
+    img.src = trash
+    container.appendChild(div)
+    container.appendChild(img)
+    container.setAttribute('data',projectIndex)
+    project_containers.appendChild(container)
+    element.value = ''
+    console.log(ProjectsArray)
+    projectIndex++;
+}
 
 
 /**
