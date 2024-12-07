@@ -7,7 +7,7 @@ import { NoDuplicates } from "./logic"
 import trash from "../img/delete.svg"
 
 const tasksArray = []//This will store the task details
-
+const PName=[]//Checking duplication array that store name for all projects
 //Let's open the project form first
 const add_project = document.querySelector('.projects')
 const showProjectForm = document.querySelector('.projects-form')
@@ -20,7 +20,7 @@ const addLabel = document.querySelector('.add-button')
 addLabel.addEventListener('click', (event) => {
     event.preventDefault();
     if (projectLabel.value !== '') {
-        let condition = NoDuplicates(ProjectsArray, projectLabel)
+        let condition = NoDuplicates(PName, projectLabel)
         console.log(condition)
         if (condition === true) {
             DOMProject(projectLabel)
@@ -96,8 +96,7 @@ function DOMProject(element) {
     const div = document.createElement('div')
     div.textContent = element.value
     div.setAttribute('name', `${element.value}`)
-    const projectname = new Projects(element.value,tasksArray)
-    ProjectsArray.push(projectname)
+    PName.push(element.value)
     const img = document.createElement('img')
     img.src = trash
     container.appendChild(div)
