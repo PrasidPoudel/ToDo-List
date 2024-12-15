@@ -3,16 +3,19 @@ import "../styles/style.css"
 import { ProjectsArray } from "./logic"
 import { Projects } from "./logic"
 import { ProjectsDetails } from "./logic"
+import { DOMStuff } from "./DOMstuff"
 import { NoDuplicates } from "./logic"
-import trash from "../img/delete.svg"
 
-const tasksArray = []//This will store the task details
-const PName=[]//Checking duplication array that store name for all projects
+export const tasks = []//This will store the task details
+export const PName = []//Checking duplication array that store name for all projects
+let projectIndex = 0
+const TaskDialogButton = document.querySelector('#submit');
 //Let's open the project form first
 const add_project = document.querySelector('.projects')
 const showProjectForm = document.querySelector('.projects-form')
 add_project.addEventListener('click', () => {
     showProjectForm.style.display = 'block'
+    document.querySelector('#project-label').focus()
 })
 //Now take the name of project and add it add-projects class
 const projectLabel = document.querySelector(`#project-label`);
@@ -23,10 +26,10 @@ addLabel.addEventListener('click', (event) => {
         let condition = NoDuplicates(PName, projectLabel)
         console.log(condition)
         if (condition === true) {
-            DOMProject(projectLabel)
+            DOMStuff.DOMProject(projectLabel, projectIndex)
         }
+        Test()
     }
-    OpenTodo()
 })
 
 //Now let's check the condition when user click cancel
@@ -38,75 +41,38 @@ cancelProjectForm.addEventListener('click', (event) => {
 
 
 //This is for showing the dialogbox for adding todo and closing the todo box
-const addTodo = document.querySelector('.add-todo')
+const addTodo = document.querySelector('.taskAdd')
 const dialogbox = document.querySelector('.dialog')
 addTodo.addEventListener('click', () => {
     dialogbox.showModal();
 })
-const cancel=document.querySelector('.cancel');
-cancel.addEventListener('click',(event)=>{
+const cancel = document.querySelector('.cancel');
+cancel.addEventListener('click', (event) => {
     event.preventDefault();
     dialogbox.close()
 })
 
 //let's open and close the dialogbox
-const TaskDialogButton = document.querySelector('#submit');
-TaskDialogButton.addEventListener('click', (event) => {
-    event.preventDefault()
-    let title = document.getElementById('title').value
-    let description = document.getElementById('description').value
-    //We have to get due date too
-    let duedate=new Date(document.getElementById('duedate').value)
-    let p = document.getElementById('Priority').value
 
-    let checkbox = document.createElement('input');
-
-    // Assigning the attributes to created checkbox
-    checkbox.type = "checkbox";
-    checkbox.name = "done";
-    checkbox.value = "value";
-    checkbox.id = "checkbox";
-    let obj = new ProjectsDetails(checkbox, title, description, duedate, p)
-
-    tasksArray.push(obj)
-    console.table(tasksArray)
-    console.log('Projects: \n')
-    console.table(ProjectsArray)
-    console.log(p)
-})
-
-//Now let's add functionality to add Todo in Projects
-function OpenTodo() {
-    const addTodo = document.querySelector('.add-todo');
-    const projectContainers = document.querySelectorAll('.add-projects>button');
-    if (projectContainers) {
-        for (let items of projectContainers) {
-            items.addEventListener('click', () => {
-                addTodo.innerHTML = '+Todo'
+function Test() {
+   
+    //Now let's add todo corresponding for user whith click w.r.to The Projects
+    const ProjectAll = document.querySelectorAll('.add-projects>button')
+    ProjectAll.forEach((project) => {
+        project.addEventListener('click', () => {//There is bug here which doubled the element creation
+            DOMStuff.TodoDOM(project)
+            TaskDialogButton.addEventListener('click', (event) => {
+                event.preventDefault()
+                DOMStuff.TodoCreation(project)
             })
-        }
-    }
-}
+        })
+    })
 
-//This is the function for adding the project on DOM 
-let projectIndex = 0
-function DOMProject(element) {
-    const project_containers = document.querySelector('.add-projects')
-    const container = document.createElement('button')
-    const div = document.createElement('div')
-    div.textContent = element.value
-    div.setAttribute('name', `${element.value}`)
-    PName.push(element.value)
-    const img = document.createElement('img')
-    img.src = trash
-    container.appendChild(div)
-    container.appendChild(img)
-    container.setAttribute('data',projectIndex)
-    project_containers.appendChild(container)
-    element.value = ''
-    console.log(ProjectsArray)
-    projectIndex++;
 }
+//Now let's add function to delete the projects
+//
+//This is the function for adding the project on DOM 
+//Now we want to make user add task by form
 
 
 /**
